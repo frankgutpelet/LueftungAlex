@@ -119,6 +119,7 @@ void setup(void) {
   timerOne.set(timerOnePeriod, timerOneFunc);
   indexPage.Set_headline(String(title) + " - " + myhostname);
   pinMode(pwmPin, OUTPUT);
+  analogWriteFreq(25000);
 
 }
 
