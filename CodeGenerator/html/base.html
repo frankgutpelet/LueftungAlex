@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<link rel="stylesheet" style="text/css">
+<meta content="de" http-equiv="Content-Language" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Embedded Template</title>
+<style type="text/css">
+
+	html {
+	  background: linear-gradient(to bottom right, navy, black);
+		background-repeat: no-repeat;
+		min-height: 100%;
+	}
+	.button {
+	  display: inline-block;
+	  padding: 15px 20px;
+	  font-size: 20px;
+	  cursor: pointer;
+	  text-align: center;
+	  text-decoration: none;
+	  outline: none;
+	  color: #fff;
+	  background-color: silver;
+	  border: none;
+	  border-radius: 10px;
+	  box-shadow: 0 9px black;
+	}
+	.auto-style-headline {
+    text-transform: uppercase;
+    font-family: verdana;
+    font-size: 3em;
+    font-weight: 700;
+    color: #f5f5f5;
+    text-shadow: 1px 1px 1px #919191,
+        1px 1px 1px #919191,
+        1px 2px 1px #919191,
+        1px 3px 1px #919191,
+        1px 4px 1px #919191,
+        1px 5px 1px #919191,
+
+    1px 18px 6px rgba(16,16,16,0.4),
+    1px 22px 10px rgba(16,16,16,0.2),
+    1px 25px 35px rgba(16,16,16,0.2);
+}
+.auto-style3 {
+	color: #EEEEEE;
+}
+.auto-style4 {
+	color: #008000;
+}
+.auto-style5 {
+	color: #A70D2A;
+}
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 35px;
+  background: #silver;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+</style>
+
+<body>
+	<p class="auto-style-headline" id="headline" >Embedded Template</p>
+	<table class="auto-style3">
+		<tr>
+			<td><strong>Temperatur: </strong></td>
+			<td><strong id="temp"></strong></td>
+		</tr>
+		<tr>
+			<td><strong>Status: </strong></td>
+			<td><strong id="status"></strong></td>
+		</tr>
+
+		<tr>
+			<td>aktuell</td>
+			<td>
+				<div class="slidecontainer">
+				<input type="range" min="1" max="100" value={{ flap }} class="slider" id="speed" onchange="sliderChange()">
+			</div>
+			</td>
+
+		</tr>
+		<tr>
+
+		</tr>
+		<tr>
+			<td>langsam</td>
+			<td>
+				<div class="slidecontainer">
+				<input type="range" min="1" max="100" value={{ flap }} class="slider" id="slow" onchange="sliderSlowChange()">
+			</div>
+			</td>
+
+		</tr>
+
+		<tr>
+			<td>schnell</td>
+			<td>
+				<div class="slidecontainer">
+				<input type="range" min="1" max="100" value={{ flap }} class="slider" id="fast" onchange="sliderFastChange()">
+			</div>
+			</td>
+
+		</tr>
+
+		<td>
+			<form action="submit" method="post" >
+				<button class="button2" id="submitBtn" type="submit" name="action" value="" >übernehmen</button>
+			</form>
+		</td>
+
+
+	</table>
+</body>
+</html>
+
+<script>
+	var values =
+	{
+		"temp" : "dynamic",
+		"speed" : "dynamic",
+		"slow" : "dynamic",
+		"fast" : "dynamic",
+		"headline" : "dynamic",
+	}
+	var editMode = false
+
+	document.title = values.headline
+	interval = setInterval(updateValues, 1000)
+
+	function sliderChange()
+	{
+		editMode = true
+		values.speed = document.getElementById("speed").value
+		document.getElementById("submitBtn").value = JSON.stringify(values)
+	}
+	function sliderSlowChange()
+	{
+		editMode = true
+		values.slow = document.getElementById("slow").value
+		document.getElementById("submitBtn").value = JSON.stringify(values)
+	}
+	function sliderFastChange()
+	{
+		editMode = true
+		values.fast = document.getElementById("fast").value
+		document.getElementById("submitBtn").value = JSON.stringify(values)
+	}
+
+	function updateValues()
+	{
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function(){
+			pairs = this.responseText.split(";");
+			for(let i = 0; i < pairs.length; i++)
+			{
+				pair = pairs[i].split(':');
+				values[pair[0]] = pair[1];
+				toChange = document.getElementById(pair[0])
+				if (null == toChange)
+				{
+					console.warn("Element " + pair[0] + "not found");
+					continue
+				}
+				if (document.getElementById(pair[0]).type == "range")
+				{
+					if (!editMode)
+					{
+						document.getElementById(pair[0]).value = pair[1]
+					}
+				}
+				else
+				{
+					document.getElementById(pair[0]).innerHTML = pair[1]
+				}
+			}
+		}
+		xhttp.open("GET", "getValues", true);
+		xhttp.send();
+	}
+
+</script>
