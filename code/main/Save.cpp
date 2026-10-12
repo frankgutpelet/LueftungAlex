@@ -2,55 +2,60 @@
 #include "Save.hpp"
 #include <ESP8266WiFi.h>
 
+static const uint32_t SAVE_MAGIC = 0x48454C32; // aendern, wenn sich dataStruct aendert
+
 SaveEEprom::SaveEEprom()
 {
   this->Read();
 }
 
+void SaveEEprom::Defaults()
+{
+  memset(&this->mqtt, 0, sizeof(this->mqtt));
+  this->mqtt.port = 1883;
+  strncpy(this->mqtt.topic, "heizluefter", sizeof(this->mqtt.topic) - 1);
+}
+
 void SaveEEprom::Read()
 {
   dataStruct storage;
-  
-  EEPROM.begin(sizeof(storage)); 
+
+  EEPROM.begin(sizeof(storage));
   EEPROM.get(0, storage);
   EEPROM.end();
-  this->slow = storage.slow;
-  this->fast = storage.fast;
+
+  if (storage.magic != SAVE_MAGIC)
+  {
+    // leerer Speicher oder altes Layout (slow/fast)
+    this->Defaults();
+    return;
+  }
+  this->mqtt = storage.mqtt;
+  // Strings sicher terminieren
+  this->mqtt.host[sizeof(this->mqtt.host) - 1] = 0;
+  this->mqtt.user[sizeof(this->mqtt.user) - 1] = 0;
+  this->mqtt.pass[sizeof(this->mqtt.pass) - 1] = 0;
+  this->mqtt.topic[sizeof(this->mqtt.topic) - 1] = 0;
+  if (this->mqtt.port == 0)
+  {
+    this->mqtt.port = 1883;
+  }
 }
+
 void SaveEEprom::Save()
 {
   dataStruct storage;
-    
-  storage.slow = this->slow;
-  storage.fast = this->fast;
 
-	EEPROM.begin(sizeof(storage)); 
-	EEPROM.put(0, storage); 
+  storage.magic = SAVE_MAGIC;
+  storage.mqtt = this->mqtt;
+
+	EEPROM.begin(sizeof(storage));
+	EEPROM.put(0, storage);
 	EEPROM.commit();
 	EEPROM.end();
-  this->Read();
 }
-void SaveEEprom::Set_slow(int slow)
+
+MqttConfig* SaveEEprom::Mqtt()
 {
-  if (this->slow != slow)
-  {
-	  this->slow = slow;
-    this->Save();
-  }
-}
-void SaveEEprom::Set_fast(int fast)
-{
-	if (this->fast != fast)
-  {
-    this->fast = fast;
-    this->Save();
-  }
-}
-int SaveEEprom::Get_slow()
-{
-	return this->slow;
-}
-int SaveEEprom::Get_fast()
-{
-	return this->fast;
+  return &this->mqtt;
 }

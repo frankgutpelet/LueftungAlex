@@ -1,26 +1,32 @@
+#pragma once
+#include <Arduino.h>
 #include <ESP_EEPROM.h>
+
+typedef struct
+{
+  bool enabled;
+  char host[64];
+  uint16_t port;
+  char user[32];
+  char pass[64];
+  char topic[48];
+} MqttConfig;
 
 class SaveEEprom
 {
   typedef struct
   {
-    int slow;
-    int fast;
-  }dataStruct;
-  
+    uint32_t magic;
+    MqttConfig mqtt;
+  } dataStruct;
+
 	public:
     SaveEEprom();
 	  void Save();
     void Read();
-    void Set_slow(int tempMin);
-	  void Set_fast(int tempMax);
+    MqttConfig* Mqtt();
 
-	  int Get_slow();
-	  int Get_fast();
-
-	
 	private:
-	  int slow;
-	  int fast;
-
+    void Defaults();
+    MqttConfig mqtt;
 };

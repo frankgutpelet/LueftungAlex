@@ -2,208 +2,339 @@
 #include <ArduinoJson.h>
 
 StaticJsonDocument < 600 > base_doc;
-const char base_text[] = "﻿<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n\
-<html xmlns=\"http://www.w3.org/1999/xhtml\">\n\
-\n\
-<head>\n\
-	<link rel=\"stylesheet\" style=\"text/css\">\n\
-<meta content=\"de\" http-equiv=\"Content-Language\" />\n\
-<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />\n\
-<title>Embedded Template</title>\n\
-<style type=\"text/css\">\n\
-\n\
-	html {\n\
-	  background: linear-gradient(to bottom right, navy, black);\n\
-		background-repeat: no-repeat;\n\
-		min-height: 100%;\n\
-	}\n\
-	.button {\n\
-	  display: inline-block;\n\
-	  padding: 15px 20px;\n\
-	  font-size: 20px;\n\
-	  cursor: pointer;\n\
-	  text-align: center;\n\
-	  text-decoration: none;\n\
-	  outline: none;\n\
-	  color: #fff;\n\
-	  background-color: silver;\n\
-	  border: none;\n\
-	  border-radius: 10px;\n\
-	  box-shadow: 0 9px black;\n\
-	}\n\
-	.auto-style-headline {\n\
-    text-transform: uppercase;\n\
-    font-family: verdana;\n\
-    font-size: 3em;\n\
-    font-weight: 700;\n\
-    color: #f5f5f5;\n\
-    text-shadow: 1px 1px 1px #919191,\n\
-        1px 1px 1px #919191,\n\
-        1px 2px 1px #919191,\n\
-        1px 3px 1px #919191,\n\
-        1px 4px 1px #919191,\n\
-        1px 5px 1px #919191,\n\
-\n\
-    1px 18px 6px rgba(16,16,16,0.4),\n\
-    1px 22px 10px rgba(16,16,16,0.2),\n\
-    1px 25px 35px rgba(16,16,16,0.2);\n\
-}\n\
-.auto-style3 {\n\
-	color: #EEEEEE;\n\
-}\n\
-.auto-style4 {\n\
-	color: #008000;\n\
-}\n\
-.auto-style5 {\n\
-	color: #A70D2A;\n\
-}\n\
-.slider {\n\
-  -webkit-appearance: none;\n\
-  width: 100%;\n\
-  height: 35px;\n\
-  background: #silver;\n\
-  outline: none;\n\
-  opacity: 0.7;\n\
-  -webkit-transition: .2s;\n\
-  transition: opacity .2s;\n\
-}\n\
-</style>\n\
-\n\
-<body>\n\
-	<p class=\"auto-style-headline\" id=\"headline\" >Embedded Template</p>\n\
-	<table class=\"auto-style3\">\n\
-		<tr>\n\
-			<td><strong>Temperatur: </strong></td>\n\
-			<td><strong id=\"temp\"></strong></td>\n\
-		</tr>\n\
-		<tr>\n\
-			<td><strong>Status: </strong></td>\n\
-			<td><strong id=\"status\"></strong></td>\n\
-		</tr>\n\
-\n\
-		<tr>\n\
-			<td>aktuell</td>\n\
-			<td>\n\
-				<div class=\"slidecontainer\">\n\
-				<input type=\"range\" min=\"1\" max=\"100\" value={{ flap }} class=\"slider\" id=\"speed\" onchange=\"sliderChange()\">\n\
-			</div>\n\
-			</td>\n\
-\n\
-		</tr>\n\
-		<tr>\n\
-\n\
-		</tr>\n\
-		<tr>\n\
-			<td>langsam</td>\n\
-			<td>\n\
-				<div class=\"slidecontainer\">\n\
-				<input type=\"range\" min=\"1\" max=\"100\" value={{ flap }} class=\"slider\" id=\"slow\" onchange=\"sliderSlowChange()\">\n\
-			</div>\n\
-			</td>\n\
-\n\
-		</tr>\n\
-\n\
-		<tr>\n\
-			<td>schnell</td>\n\
-			<td>\n\
-				<div class=\"slidecontainer\">\n\
-				<input type=\"range\" min=\"1\" max=\"100\" value={{ flap }} class=\"slider\" id=\"fast\" onchange=\"sliderFastChange()\">\n\
-			</div>\n\
-			</td>\n\
-\n\
-		</tr>\n\
-\n\
-		<td>\n\
-			<form action=\"submit\" method=\"post\" >\n\
-				<button class=\"button2\" id=\"submitBtn\" type=\"submit\" name=\"action\" value=\"\" >übernehmen</button>\n\
-			</form>\n\
-		</td>\n\
-\n\
-\n\
-	</table>\n\
-</body>\n\
-</html>\n\
-\n\
-<script>\n\
-	var values =\n\
-	{\n\
-		\"temp\" : \"dynamic\",         \n\
-		\"speed\" : \"dynamic\",        \n\
-		\"slow\" : \"dynamic\",         \n\
-		\"fast\" : \"dynamic\",         \n\
-		\"headline\" : \"dynamic\",     \n\
-	}\n\
-	var editMode = false\n\
-\n\
-	document.title = values.headline\n\
-	interval = setInterval(updateValues, 1000)\n\
-\n\
-	function sliderChange()\n\
-	{\n\
-		editMode = true\n\
-		values.speed = document.getElementById(\"speed\").value\n\
-		document.getElementById(\"submitBtn\").value = JSON.stringify(values)\n\
-	}\n\
-	function sliderSlowChange()\n\
-	{\n\
-		editMode = true\n\
-		values.slow = document.getElementById(\"slow\").value\n\
-		document.getElementById(\"submitBtn\").value = JSON.stringify(values)\n\
-	}\n\
-	function sliderFastChange()\n\
-	{\n\
-		editMode = true\n\
-		values.fast = document.getElementById(\"fast\").value\n\
-		document.getElementById(\"submitBtn\").value = JSON.stringify(values)\n\
-	}\n\
-\n\
-	function updateValues()\n\
-	{\n\
-		var xhttp = new XMLHttpRequest();\n\
-		xhttp.onreadystatechange = function(){\n\
-			pairs = this.responseText.split(\";\");\n\
-			for(let i = 0; i < pairs.length; i++)\n\
-			{\n\
-				pair = pairs[i].split(':');\n\
-				values[pair[0]] = pair[1];\n\
-				toChange = document.getElementById(pair[0])\n\
-				if (null == toChange)\n\
-				{\n\
-					console.warn(\"Element \" + pair[0] + \"not found\");\n\
-					continue\n\
-				}\n\
-				if (document.getElementById(pair[0]).type == \"range\")\n\
-				{\n\
-					if (!editMode)\n\
-					{\n\
-						document.getElementById(pair[0]).value = pair[1]\n\
-					}\n\
-				}\n\
-				else\n\
-				{\n\
-					document.getElementById(pair[0]).innerHTML = pair[1]\n\
-				}\n\
-			}\n\
-		}\n\
-		xhttp.open(\"GET\", \"getValues\", true);\n\
-		xhttp.send();\n\
-	}\n\
-\n\
-</script>\n\
-";
+const char base_text[] PROGMEM = R"rawliteral(<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Embedded Template</title>
+<style>
+:root {
+	--bg: #0b1020; --card: #141b2e; --card2: #1b243b; --line: #27324d;
+	--text: #e8ecf6; --mute: #8b97b5;
+	--accent: #ff8a3d; --accent2: #ffb36b;
+	--ok: #34d399; --warn: #fbbf24; --bad: #f87171;
+}
+@media (prefers-color-scheme: light) {
+	:root {
+		--bg: #f3f5fa; --card: #ffffff; --card2: #eef1f8; --line: #dde3f0;
+		--text: #161c2e; --mute: #667290;
+		--accent: #f06a0f; --accent2: #ff9a4d;
+		--ok: #059669; --warn: #b45309; --bad: #dc2626;
+	}
+}
+* { box-sizing: border-box; }
+body {
+	margin: 0; min-height: 100vh; color: var(--text);
+	font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	background: radial-gradient(900px 500px at 15% -10%, rgba(255,138,61,.14), transparent 60%), var(--bg);
+}
+.wrap { max-width: 560px; margin: 0 auto; padding: 20px 16px 40px; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+h1 { margin: 0; font-size: 1.35rem; font-weight: 700; letter-spacing: .2px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; margin-bottom: 16px; }
+.card h2 { margin: 0 0 14px; font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--mute); display: flex; justify-content: space-between; align-items: center; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: var(--card2); color: var(--mute); text-transform: none; letter-spacing: 0; }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.pill.ok { color: var(--ok); } .pill.warn { color: var(--warn); } .pill.bad { color: var(--bad); }
+
+.gauge { position: relative; width: 220px; height: 220px; margin: 0 auto 6px; }
+.gauge svg { width: 100%; height: 100%; }
+.gauge .track { stroke: var(--card2); }
+.gauge .bar { stroke: url(#grad); transition: stroke-dasharray .25s ease; }
+.gauge .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.gauge .num { font-size: 3.4rem; font-weight: 700; line-height: 1; }
+.gauge .num small { font-size: 1.3rem; color: var(--mute); margin-left: 2px; }
+.gauge .lbl { color: var(--mute); font-size: .85rem; margin-top: 6px; }
+
+input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 12px; border-radius: 99px; outline: none; margin: 14px 0 18px;
+	background: linear-gradient(90deg, var(--accent2), var(--accent)) 0 / var(--p, 0%) 100% no-repeat, var(--card2); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 4px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,.35); cursor: pointer; }
+input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 4px solid var(--accent); cursor: pointer; }
+
+.row { display: flex; gap: 10px; }
+button, .btn { font: inherit; font-weight: 600; cursor: pointer; border: 1px solid var(--line); background: var(--card2); color: var(--text); border-radius: 14px; padding: 12px 16px; flex: 1; transition: transform .05s, filter .15s; }
+button:hover { filter: brightness(1.12); } button:active { transform: scale(.97); }
+button.primary { background: linear-gradient(135deg, var(--accent2), var(--accent)); border: none; color: #1a0e02; }
+button.off { color: var(--bad); }
+
+.temp { font-size: 2.6rem; font-weight: 700; } .temp small { font-size: 1.2rem; color: var(--mute); }
+.hint { color: var(--mute); font-size: .85rem; margin-top: 4px; }
+
+label { display: block; font-size: .85rem; color: var(--mute); margin: 12px 0 5px; }
+input[type=text], input[type=password], input[type=number] { width: 100%; font: inherit; color: var(--text); background: var(--card2); border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; outline: none; }
+input[type=text]:focus, input[type=password]:focus, input[type=number]:focus { border-color: var(--accent); }
+.grid { display: grid; grid-template-columns: 1fr 110px; gap: 10px; }
+.switch { display: flex; align-items: center; justify-content: space-between; margin: 0 0 4px; font-size: 1rem; color: var(--text); }
+.switch input { appearance: none; -webkit-appearance: none; width: 50px; height: 30px; border-radius: 99px; background: var(--card2); border: 1px solid var(--line); position: relative; cursor: pointer; transition: background .2s; }
+.switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform .2s; }
+.switch input:checked { background: var(--accent); border-color: var(--accent); }
+.switch input:checked::after { transform: translateX(20px); }
+#mqttForm .primary { width: 100%; margin-top: 18px; flex: none; }
+
+details { margin-top: 4px; } summary { cursor: pointer; color: var(--mute); font-size: .9rem; padding: 4px 0; }
+pre { white-space: pre-wrap; margin: 10px 0 0; padding: 12px; background: var(--card2); border-radius: 12px; font-size: .8rem; overflow-x: auto; color: var(--text); }
+
+#toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 80px); background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 99px; font-weight: 600; font-size: .9rem; opacity: 0; transition: all .25s; pointer-events: none; }
+#toast.show { transform: translate(-50%, 0); opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<h1 id="headline">Embedded Template</h1>
+		<span class="pill" id="conn">verbinde&hellip;</span>
+	</header>
+
+	<section class="card">
+		<h2>Drehzahl</h2>
+		<div class="gauge">
+			<svg viewBox="0 0 120 120">
+				<defs>
+					<linearGradient id="grad" x1="0" y1="1" x2="1" y2="0">
+						<stop offset="0" stop-color="#ffb36b"/><stop offset="1" stop-color="#ff5d3d"/>
+					</linearGradient>
+				</defs>
+				<circle class="track" cx="60" cy="60" r="52" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="245 327" transform="rotate(135 60 60)"/>
+				<circle class="bar" id="bar" cx="60" cy="60" r="52" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 327" transform="rotate(135 60 60)"/>
+			</svg>
+			<div class="center">
+				<div class="num"><span id="speedNum">0</span><small>%</small></div>
+				<div class="lbl">aktuell</div>
+			</div>
+		</div>
+		<input type="range" min="0" max="100" value="0" step="1" id="speed">
+		<div class="row">
+			<button onclick="step(-5)">&minus; 5</button>
+			<button class="off" onclick="sendSpeed(0)">Aus</button>
+			<button onclick="step(5)">+ 5</button>
+		</div>
+	</section>
+
+	<section class="card">
+		<h2>Temperatur</h2>
+		<div class="temp"><span id="temp">--</span><small> &deg;C</small></div>
+		<div class="hint" id="tempHint"></div>
+	</section>
+
+	<section class="card">
+		<h2>MQTT <span class="pill" id="mqttPill">aus</span></h2>
+		<form id="mqttForm" onsubmit="return saveMqtt(event)">
+			<label class="switch">MQTT aktivieren <input type="checkbox" id="mEnabled"></label>
+			<label for="mHost">Broker</label>
+			<div class="grid">
+				<input type="text" id="mHost" placeholder="192.168.1.10" autocomplete="off" maxlength="63">
+				<input type="number" id="mPort" placeholder="1883" min="1" max="65535">
+			</div>
+			<label for="mUser">Benutzer (optional)</label>
+			<input type="text" id="mUser" autocomplete="off" maxlength="31">
+			<label for="mPass">Passwort (leer = unver&auml;ndert)</label>
+			<input type="password" id="mPass" autocomplete="new-password" maxlength="63">
+			<label for="mTopic">Basis-Topic</label>
+			<input type="text" id="mTopic" placeholder="heizluefter" autocomplete="off" maxlength="47" oninput="topics()">
+			<button class="primary" type="submit">Speichern</button>
+		</form>
+		<details>
+			<summary>Schnittstellen</summary>
+			<pre id="api"></pre>
+		</details>
+	</section>
+</div>
+<div id="toast"></div>
+</body>
+</html>
+
+<script>
+	var values =
+	{
+		"temp" : "dynamic",
+		"speed" : "dynamic",
+		"headline" : "dynamic",
+		"mqtt" : "dynamic",
+	}
+	var editUntil = 0
+	var sendTimer = null
+	var mqttLoaded = false
+	function $(id) { return document.getElementById(id) }
+
+	function toast(msg)
+	{
+		var t = $("toast")
+		t.textContent = msg
+		t.classList.add("show")
+		clearTimeout(t.timer)
+		t.timer = setTimeout(function() { t.classList.remove("show") }, 2200)
+	}
+
+	function setPill(el, cls, text)
+	{
+		el.className = "pill " + cls
+		el.textContent = text
+	}
+
+	function showSpeed(v)
+	{
+		v = Math.max(0, Math.min(100, v))
+		$("speedNum").textContent = v
+		$("speed").value = v
+		$("speed").style.setProperty("--p", v + "%")
+		$("bar").style.strokeDasharray = (245 * v / 100) + " 327"
+		$("bar").style.opacity = v > 0 ? 1 : 0
+	}
+
+	function sendSpeed(v)
+	{
+		v = Math.max(0, Math.min(100, Math.round(v)))
+		editUntil = Date.now() + 2500
+		showSpeed(v)
+		clearTimeout(sendTimer)
+		sendTimer = setTimeout(function()
+		{
+			fetch("submit", {
+				method: "POST",
+				headers: {"Content-Type": "application/x-www-form-urlencoded"},
+				body: "action=" + encodeURIComponent(JSON.stringify({"speed": String(v)}))
+			}).then(function(r)
+			{
+				if (!r.ok) throw new Error(r.status)
+				editUntil = 0
+				updateValues()
+			}).catch(function()
+			{
+				editUntil = 0
+				toast("Senden fehlgeschlagen")
+			})
+		}, 120)
+	}
+
+	function step(d)
+	{
+		sendSpeed(parseInt($("speed").value) + d)
+	}
+
+	$("speed").addEventListener("input", function() { sendSpeed(parseInt(this.value)) })
+
+	function show()
+	{
+		document.title = values.headline
+		$("headline").textContent = values.headline
+
+		var t = parseFloat(values.temp)
+		var bad = isNaN(t) || t < -100
+		$("temp").textContent = bad ? "--" : t.toFixed(1)
+		$("tempHint").textContent = bad ? "Kein Temperatursensor gefunden" : ""
+
+		if (Date.now() > editUntil)
+		{
+			showSpeed(parseInt(values.speed) || 0)
+		}
+
+		var m = values.mqtt
+		if (m == "verbunden") setPill($("mqttPill"), "ok", "verbunden")
+		else if (m == "getrennt") setPill($("mqttPill"), "warn", "getrennt")
+		else setPill($("mqttPill"), "", "aus")
+	}
+
+	function updateValues()
+	{
+		fetch("getValues", {cache: "no-store"}).then(function(r) { return r.text() }).then(function(text)
+		{
+			text.split(";").forEach(function(pair)
+			{
+				var i = pair.indexOf(":")
+				if (i > 0) values[pair.slice(0, i)] = pair.slice(i + 1)
+			})
+			setPill($("conn"), "ok", "online")
+			show()
+		}).catch(function()
+		{
+			setPill($("conn"), "bad", "offline")
+		})
+	}
+
+	function topics()
+	{
+		var t = $("mTopic").value || "heizluefter"
+		$("api").textContent =
+			"HTTP\n" +
+			"  /cm?speed=60          Drehzahl in %\n" +
+			"  /cm?cmnd=Power off    Aus\n\n" +
+			"MQTT\n" +
+			"  " + t + "/speed/set    Drehzahl in % setzen (0-100)\n" +
+			"  " + t + "/speed        aktuelle Drehzahl (retained)\n" +
+			"  " + t + "/temp         Temperatur in °C\n" +
+			"  " + t + "/status       online / offline"
+	}
+
+	function fillMqtt(c)
+	{
+		$("mEnabled").checked = c.enabled
+		$("mHost").value = c.host
+		$("mPort").value = c.port
+		$("mUser").value = c.user
+		$("mPass").value = ""
+		$("mPass").placeholder = c.hasPass ? "•••••• gespeichert" : ""
+		$("mTopic").value = c.topic
+		topics()
+	}
+
+	function loadMqtt()
+	{
+		fetch("mqtt", {cache: "no-store"}).then(function(r) { return r.json() }).then(function(c)
+		{
+			fillMqtt(c)
+			mqttLoaded = true
+		}).catch(function() { setTimeout(loadMqtt, 2000) })
+	}
+
+	function saveMqtt(ev)
+	{
+		ev.preventDefault()
+		var p = new URLSearchParams()
+		p.set("enabled", $("mEnabled").checked ? "1" : "0")
+		p.set("host", $("mHost").value.trim())
+		p.set("port", $("mPort").value)
+		p.set("user", $("mUser").value)
+		p.set("pass", $("mPass").value)
+		p.set("topic", $("mTopic").value.trim())
+		fetch("mqtt", {
+			method: "POST",
+			headers: {"Content-Type": "application/x-www-form-urlencoded"},
+			body: p.toString()
+		}).then(function(r)
+		{
+			if (!r.ok) return r.text().then(function(t) { throw new Error(t) })
+			return r.json()
+		}).then(function(c)
+		{
+			fillMqtt(c)
+			toast("MQTT gespeichert")
+		}).catch(function(e)
+		{
+			toast(e.message || "Speichern fehlgeschlagen")
+		})
+		return false
+	}
+
+	topics()
+	loadMqtt()
+	updateValues()
+	setInterval(updateValues, 1000)
+</script>
+)rawliteral";
 
 base::base(ESP8266WebServer* server)
 {
 	this->server = server;
 	this->submit_UserCallback = (void(*)()) NULL;
-	this->server->on("/submit", std::bind( & base::Submit_Callback, this));
+	this->server->on("/submit", HTTP_POST, std::bind( & base::Submit_Callback, this));
 	this->server->on("/getValues", std::bind( & base::GetAjaxValues, this));
 }
 void base::Submit_Callback(void)
 {
 	String jsonstring = this->server->arg("action");
 	DeserializationError error = deserializeJson(base_doc, jsonstring);
-	Serial.println(jsonstring);
 	JsonObject obj = base_doc.as < JsonObject > ();
 
 	if (error)
@@ -213,11 +344,22 @@ void base::Submit_Callback(void)
 	}
 	else
 	{
-		this->slow = obj["slow"].as < String > ();
-		this->fast = obj["fast"].as < String > ();
-		this->temp = obj["temp"].as < String > ();
-		this->headline = obj["headline"].as < String > ();
-		this->speed = obj["speed"].as < String > ();
+		if (obj.containsKey("temp"))
+		{
+			this->temp = obj["temp"].as < String > ();
+		}
+		if (obj.containsKey("speed"))
+		{
+			this->speed = obj["speed"].as < String > ();
+		}
+		if (obj.containsKey("headline"))
+		{
+			this->headline = obj["headline"].as < String > ();
+		}
+		if (obj.containsKey("mqtt"))
+		{
+			this->mqtt = obj["mqtt"].as < String > ();
+		}
 
 	}
 	if (NULL != this->submit_UserCallback)
@@ -231,24 +373,6 @@ void base::SetCallback_submit (void (*callback)(void))
 	this->submit_UserCallback = callback;
 }
 
-void base::Set_slow (String value)
-{
-	this->slow = value;
-}
-
-String base::Get_slow ( void )
-{
-	return this->slow;
-}
-void base::Set_fast (String value)
-{
-	this->fast = value;
-}
-
-String base::Get_fast ( void )
-{
-	return this->fast;
-}
 void base::Set_temp (String value)
 {
 	this->temp = value;
@@ -257,15 +381,6 @@ void base::Set_temp (String value)
 String base::Get_temp ( void )
 {
 	return this->temp;
-}
-void base::Set_headline (String value)
-{
-	this->headline = value;
-}
-
-String base::Get_headline ( void )
-{
-	return this->headline;
 }
 void base::Set_speed (String value)
 {
@@ -276,12 +391,30 @@ String base::Get_speed ( void )
 {
 	return this->speed;
 }
+void base::Set_headline (String value)
+{
+	this->headline = value;
+}
+
+String base::Get_headline ( void )
+{
+	return this->headline;
+}
+void base::Set_mqtt (String value)
+{
+	this->mqtt = value;
+}
+
+String base::Get_mqtt ( void )
+{
+	return this->mqtt;
+}
 void base::Render( void )
 {
-	this->server->send( 200, base_text);
+	this->server->send_P( 200, "text/html", base_text);
 }
 void base::GetAjaxValues( void )
 {
-	String message = "slow:" + this->slow + ";fast:" + this->fast + ";temp:" + this->temp + ";headline:" + this->headline + ";speed:" + this->speed;
+	String message = "temp:" + this->temp + ";speed:" + this->speed + ";headline:" + this->headline + ";mqtt:" + this->mqtt;
 	this->server->send(200, "text/plain", message);
 }

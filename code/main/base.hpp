@@ -9,24 +9,21 @@ class base
 		void Render (void);
 		void GetAjaxValues (void);
 		void SetCallback_submit (void (*callback)(void));
-		void Set_slow (String value);
-		String Get_slow ();
-		void Set_fast (String value);
-		String Get_fast ();
 		void Set_temp (String value);
 		String Get_temp ();
-		void Set_headline (String value);
-		String Get_headline ();
 		void Set_speed (String value);
 		String Get_speed ();
+		void Set_headline (String value);
+		String Get_headline ();
+		void Set_mqtt (String value);
+		String Get_mqtt ();
 	private:
 		void Submit_Callback(void);
 		void(*submit_UserCallback)(void);
 		ESP8266WebServer* server;
 
-		String slow;
-		String fast;
 		String temp;
-		String headline;
 		String speed;
+		String headline;
+		String mqtt;
 };
